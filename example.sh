@@ -10,6 +10,7 @@ usage () {
   echo "  -s <sender-email>">&2
   echo "  -t <to-emails>">&2
   echo "  -c <cc-emails>">&2
+  echo "  [-p]">&2
 }
 
 usage_err () {
@@ -20,11 +21,13 @@ sender_email=""
 cc_emails=""
 to_emails=""
 msg_subject=""
-while getopts "c:hj:s:t:" o; do
+printonly=false
+while getopts "c:hj:ps:t:" o; do
   case "$o" in
     c) cc_emails="$OPTARG" ;;
     h) usage; exit 0 ;;
     j) msg_subject="$OPTARG" ;;
+    p) printonly=true ;;
     s) sender_email="$OPTARG" ;;
     t) to_emails="$OPTARG" ;;
   esac
@@ -66,4 +69,8 @@ compose_mail () {
   mime_end "$boundary"
 }
 
-compose_mail | send_mail "$sender_addr"
+if $printonly; then
+  compose_mail
+else
+  compose_mail | send_mail "$sender_addr"
+fi
