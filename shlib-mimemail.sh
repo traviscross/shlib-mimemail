@@ -31,11 +31,13 @@ err () {
 }
 
 trim_leading_spaces () {
-  printf "%s" "${1#""${1%%[![:space:]]*}""}"
+  #printf "%s" "${1#""${1%%[![:s]*}""}" # broken in dash v0.5.{6,7}
+  printf "%s" "$1" | sed "s/^[[:space:]]*//"
 }
 
 trim_trailing_spaces () {
-  printf "%s" "${1%""${1##*[![:space:]]}""}"
+  #printf "%s" "${1%""${1##*[![:space:]]}""}" # broken in dash v0.5.{6,7}
+  printf "%s" "$1" | sed "s/[[:space:]]*$//"
 }
 
 trim_spaces () {
