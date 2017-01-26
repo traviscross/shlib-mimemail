@@ -10,6 +10,7 @@ usage () {
   echo "  -s <sender-email>">&2
   echo "  -t <to-emails>">&2
   echo "  -c <cc-emails>">&2
+  echo "  [-m]">&2
   echo "  [-p]">&2
 }
 
@@ -21,12 +22,14 @@ sender_email=""
 cc_emails=""
 to_emails=""
 msg_subject=""
+compress=false
 printonly=false
-while getopts "c:hj:ps:t:" o; do
+while getopts "c:hj:mps:t:" o; do
   case "$o" in
     c) cc_emails="$OPTARG" ;;
     h) usage; exit 0 ;;
     j) msg_subject="$OPTARG" ;;
+    m) compress=true ;;
     p) printonly=true ;;
     s) sender_email="$OPTARG" ;;
     t) to_emails="$OPTARG" ;;
@@ -63,9 +66,15 @@ compose_mail () {
   mime_next "$boundary"
   template_body | mime_add_text_plain
   mime_next "$boundary"
-  head -n100 /usr/share/dict/words \
-    | mime_add_file_gzip "$boundary" \
-    "some_words.txt.gz"
+  if $compress; then
+    head -n100 /usr/share/dict/words \
+      | mime_add_file_gzip "$boundary" \
+      "some_words.txt.gz"
+  else
+    head -n100 /usr/share/dict/words \
+      | mime_add_file "$boundary" \
+      "text/plain" "8bit" "some_words.txt"
+  fi
   mime_end "$boundary"
 }
 
