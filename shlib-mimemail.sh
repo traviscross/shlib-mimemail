@@ -41,7 +41,7 @@ trim_trailing_spaces () {
 }
 
 trim_spaces () {
-  printf "%s" "$(trim_leading_spaces "$(trim_trailing_spaces "$1")")"
+  trim_leading_spaces "$(trim_trailing_spaces "$1")"
 }
 
 email_name () {
@@ -49,7 +49,7 @@ email_name () {
 }
 
 email_name () {
-  printf "%s" "$(trim_spaces "${1%%<*}")"
+  trim_spaces "${1%%<*}"
 }
 
 email_addr () {
